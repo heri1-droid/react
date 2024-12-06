@@ -2,35 +2,31 @@ import React, {useEffect, useState} from "react"
 import axios from 'axios'
 
 export  default function List() {
-    // state fakultas
-    const [fakultas, setFakultas] = useState([]);
+     // state mahasiswa
+    const [mahasiswa, setMahasiswa] = useState([]);
 
     useEffect( () => {
         axios
-        .get("https://academic-mi5a.vercel.app/api/api/fakultas")
+        .get("https://academic-mi5a.vercel.app/api/api/mahasiswa")
         .then( (response) => {
             console.log(response);
-            setFakultas(response.data.data)
+            setMahasiswa(response.data.data)
         })
     }, [] )
 
     return (
         <>
-            <h2>List Fakultas</h2>
+            <h2>List Mahasiswa</h2>
             <table className="table">
                 <thead>
                     <tr>
                         <th>Nama</th>
-                        <th>Dekan</th>
-                        <th>Singkatan</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {fakultas.map( (data) => (
+                    {mahasiswa.map( (data) => (
                         <tr key={data.id}>
                             <td>{data.nama}</td>
-                            <td>{data.dekan}</td>
-                            <td>{data.singkatan}</td>
                         </tr>
                     ))}
                 </tbody>
