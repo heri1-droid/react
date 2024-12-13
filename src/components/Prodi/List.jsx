@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react"
 import axios from 'axios'
+import { NavLink } from "react-router-dom";
+ 
 
 export  default function List() {
      // state prodi
@@ -17,6 +19,9 @@ export  default function List() {
     return (
         <>
             <h2>List Prodi</h2>
+            <NavLink to="/prodi/Create" className="btn btn-primary mb-3">
+                Create
+            </NavLink>
             <table className="table">
                 <thead>
                     <tr>
