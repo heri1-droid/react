@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react"
 import axios from 'axios'
+import { NavLink } from "react-router-dom";
+
 
 export  default function List() {
      // state mahasiswa
@@ -17,17 +19,12 @@ export  default function List() {
     return (
         <>
             <h2>List Mahasiswa</h2>
+            <NavLink to="/mahasiswa/create" className="btn btn-primary mb-3">
+                Create
+            </NavLink>
             <table className="table">
                 <thead>
                     <tr>
-                    {/* "npm": "2226250001",
-      "nama": "Raymond Indrawan Silalahi",
-      "tanggal_lahir": "2000-01-01",
-      "tempat_lahir": "Palembang",
-      "email": "raymond@test.com",
-      "hp": "0812",
-      "alamat": "Jalan Rajawali",
-      "prodi_id": "c2d936a9-7014-11ef-bdc2-a8a1598fdbd1", */}
                         <th>npm</th>
                         <th>Nama</th>
                         <th>Tanggal lahir</th>

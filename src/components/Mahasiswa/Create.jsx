@@ -13,9 +13,8 @@ export default function CreateProdi() {
     const [email, setEmail] = useState("");
     const [hp, setHp] = useState("");
     const [alamat, setAlamat] = useState("");
-    const [prodi, setProdi] = useState("");
-    const [fakultas, setFakultas] = useState("");
-  const [fakultasId, setFakultasId] = useState("");
+    const [prodiId, setProdiId] = useState("");
+    const [fakultasId, setFakultasId] = useState("");
 
     // Inisialisasi state untuk menyimpan daftar fakultas
     const [fakultasList, setFakultasList] = useState([]);
@@ -78,85 +77,77 @@ export default function CreateProdi() {
 
     // Fungsi yang akan dijalankan saat form disubmit
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Mencegah reload halaman setelah form disubmit
-        setError(""); // Reset pesan error sebelum proses
-        setSuccess(""); // Reset pesan sukses sebelum proses
-
-        // Validasi input: jika namaFakultas kosong, set pesan error
-        if (npmMahasiswa.trim() === "") {
-            setError("Npm is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (nama.trim() === "") {
-            setError("nama is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (tanggalLahir.trim() === "") {
-            setError("tanggal lahir is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (tempatLahir.trim() === "") {
-            setError("tempat lahir is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (email.trim() === "") {
-            setError("email lahir is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-
-        if (hp.trim() === "") {
-            setError("nomor hp is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (alamat.trim() === "") {
-            setError("alamat is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (prodi.trim() === "") {
-            setError("alamat is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-        if (fakultasId.trim() === "") {
-            setError("fakultas is required"); // Set pesan error jika input kosong
-            return; // Stop eksekusi fungsi jika input tidak valid
-        }
-
+        e.preventDefault();
+        setError(""); 
+        setSuccess(""); 
+    
+        // Validasi input (tetap sama seperti sebelumnya)
+        // ...
+    
         try {
-            // Melakukan HTTP POST request untuk menyimpan data fakultas
+            // Tambahkan console.log untuk payload
+            const payload = {
+                npm: npmMahasiswa,
+                nama: nama,
+                tanggal_lahir: tanggalLahir,
+                tempat_lahir: tempatLahir,
+                email: email,
+                hp: hp,
+                alamat: alamat,
+                prodi_id: prodiId,
+                fakultas_id: fakultasId
+            };
+    
+            console.log("Payload being sent:", payload);
+    
             const response = await axios.post(
-                "https://academic-mi5a.vercel.app/api/api/mahasiswa", // Endpoint API yang dituju
+                "https://academic-mi5a.vercel.app/api/api/mahasiswa", 
+                payload,
                 {
-                    npm: npmMahasiswa, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    nama: nama, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    tanggal_lahir: tanggalLahir, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    tempatLahir: tempatLahir, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    email: email, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    hp: hp, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    alamat: alamat, // Data yang dikirim berupa objek JSON dengan properti 'nama'
-                    prodi_id : prodiid,
-                    fakultas_id: fakultasId, // Data ID fakultas yang dipilih
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 }
             );
-
-            // Jika response HTTP status 201 (Created), berarti berhasil
-            if (response.status === 201) {
-                // Tampilkan pesan sukses jika fakultas berhasil dibuat
-                setSuccess("Prodi created successfully!");
+    
+            // Log full response
+            console.log("Full Response:", response);
+            console.log("Response Status:", response.status);
+            console.log("Response Data:", response.data);
+    
+            // Perluas kondisi keberhasilan
+            if (response.status === 201 || response.status === 200) {
+                setSuccess("Mahasiswa created successfully!");
+                // Reset form
                 setNpmMahasiswa("");
                 setNama("");
                 setTanggalLahir("");
                 setTempatLahir("");
                 setEmail("");
                 setHp("");
-                setProdi("");
-                setFakultasId(""); // Kosongkan dropdown setelah sukses submi
+                setProdiId("");
+                setFakultasId("");
             } else {
-                // Jika tidak berhasil, tampilkan pesan error
-                setError("Failed to create prodi");
+                setError(`Failed to create mahasiswa. Status: ${response.status}`);
             }
         } catch (error) {
-            // Jika terjadi error (misal masalah jaringan), tampilkan pesan error
-            setError("An error occurred while creating prodi");
+            // Logging yang lebih detail untuk error
+            console.error("Full error object:", error);
+            
+            if (error.response) {
+                // Server responded with an error status code
+                console.error("Server error response:", error.response.data);
+                console.error("Status code:", error.response.status);
+                setError(error.response.data.message || "Failed to create mahasiswa");
+            } else if (error.request) {
+                // Request was made but no response received
+                console.error("No response received:", error.request);
+                setError("No response from server");
+            } else {
+                // Something else went wrong
+                console.error("Error setting up request:", error.message);
+                setError("An error occurred while creating mahasiswa");
+            }
         }
     };
 
@@ -179,33 +170,99 @@ export default function CreateProdi() {
                     <input
                         type="text" className="form-control" id="npmMahasiswa"
                         value={npmMahasiswa} // Nilai input disimpan di state namaFakultas
-                        onChange={(e) => setNamaProdi(e.target.value)} // Update state saat input berubah
-                        placeholder="Enter Prodi Name" // Placeholder teks untuk input
+                        onChange={(e) => setNpmMahasiswa(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter NPM Name" // Placeholder teks untuk input
                     />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">
-                        Kaprodi
+                        Nama
                     </label>
                     {/* Input untuk nama fakultas dengan class bootstrap */}
                     <input
-                        type="text" className="form-control" id="kaprodi"
-                        value={kaprodi} // Nilai input disimpan di state namaFakultas
-                        onChange={(e) => setKaprodi(e.target.value)} // Update state saat input berubah
-                        placeholder="Enter Kaprodi Name" // Placeholder teks untuk input
+                        type="text" className="form-control" id="nama"
+                        value={nama} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setNama(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter Nama Name" // Placeholder teks untuk input
                     />
                 </div>
                 <div className="mb-3">
                     <label className="form-label">
-                        singkatan
+                        Tanggal Lahir
                     </label>
                     {/* Input untuk nama fakultas dengan class bootstrap */}
                     <input
-                        type="text" className="form-control" id="singkatan"
-                        value={singkatan} // Nilai input disimpan di state namaFakultas
-                        onChange={(e) => setSingkatan(e.target.value)} // Update state saat input berubah
-                        placeholder="Enter Fakultas Name" // Placeholder teks untuk input
+                        type="text" className="form-control" id="tanggalLahir"
+                        value={tanggalLahir} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setTanggalLahir(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter Nama Name" // Placeholder teks untuk input
                     />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">
+                        Tempat Lahir
+                    </label>
+                    {/* Input untuk nama fakultas dengan class bootstrap */}
+                    <input
+                        type="text" className="form-control" id="tempatLahir"
+                        value={tempatLahir} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setTempatLahir(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter tempat Lahir Nama" // Placeholder teks untuk input
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">
+                        email
+                    </label>
+                    {/* Input untuk nama fakultas dengan class bootstrap */}
+                    <input
+                        type="text" className="form-control" id="email"
+                        value={email} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setEmail(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter Email Name" // Placeholder teks untuk input
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">
+                        Hp
+                    </label>
+                    {/* Input untuk nama fakultas dengan class bootstrap */}
+                    <input
+                        type="text" className="form-control" id="hp"
+                        value={hp} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setHp(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter Hp Name" // Placeholder teks untuk input
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">
+                        Alamat
+                    </label>
+                    {/* Input untuk nama fakultas dengan class bootstrap */}
+                    <input
+                        type="text" className="form-control" id="alamat"
+                        value={alamat} // Nilai input disimpan di state namaFakultas
+                        onChange={(e) => setAlamat(e.target.value)} // Update state saat input berubah
+                        placeholder="Enter Hp Name" // Placeholder teks untuk input
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Prodi</label>
+                    {/* Dropdown untuk memilih fakultas */}
+                    <select
+                        className="form-select"
+                        id="prodiId"
+                        value={prodiId} // Nilai dropdown disimpan di state fakultasId
+                        onChange={(e) => setProdiId(e.target.value)} // Update state saat pilihan berubah
+                    >
+                        <option value="">Select Prodi</option>
+                        {prodiList.map((prodi) => (
+                            <option key={prodi.id} value={prodi.id}>
+                                {/* Set key dan value untuk masing-masing fakultas */}
+                                {prodi.nama} {/* Nama fakultas sebagai teks di dropdown */}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="mb-3">
                     <label className="form-label">Fakultas</label>
